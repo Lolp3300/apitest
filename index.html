@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Random</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    img {
+      margin-top: 20px;
+      max-width: 90%;
+      height: auto;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Image Aléatoire</h1>
+  <button id="randomImageBtn">Afficher une image aléatoire</button>
+  <div id="imageContainer">
+    <!-- L'image aléatoire apparaîtra ici -->
+  </div>
+
+  <script>
+    document.getElementById('randomImageBtn').addEventListener('click', () => {
+      const apiUrl = 'https://api.rule34.xxx/index.php?page=dapi&s=post&q=index&limit=1';
+      
+      fetch(apiUrl)
+        .then(response => response.text()) // Récupère la réponse en XML
+        .then(data => {
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(data, "application/xml");
+          const posts = xmlDoc.getElementsByTagName("post");
+          
+          if (posts.length > 0) {
+            const randomPost = posts[Math.floor(Math.random() * posts.length)];
+            const imageUrl = randomPost.getAttribute("file_url");
+
+            // Affiche l'image
+            const imageContainer = document.getElementById('imageContainer');
+            imageContainer.innerHTML = `<img src="${imageUrl}" alt="Image Aléatoire">`;
+          } else {
+            alert("Aucune image trouvée.");
+          }
+        })
+        .catch(error => {
+          console.error('Erreur lors de la requête API:', error);
+          alert("Impossible de récupérer une image.");
+        });
+    });
+  </script>
+</body>
+</html>
